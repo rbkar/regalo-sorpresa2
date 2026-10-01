@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Mi Pastelito ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffc0cb;
+            background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('tulipanes.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 15px 60px 15px;
+            overflow-x: hidden;
+        }
+
+        /* Reproductor de música flotante */
+        #music-player-bar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 18px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        #music-btn {
+            background: #ff4d6d;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #music-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Tarjetas estilo cristal */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            margin-top: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        h1, h2 {
+            color: #d63384;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.4);
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 77, 109, 0.6);
+        }
+
+        /* Juego inicial de botones */
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 50px;
+        }
+
+        #btn-no {
+            position: absolute;
+            background-color: #6c757d;
+            box-shadow: none;
+            white-space: nowrap;
+        }
+
+        .seccion-oculta {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 25px;
+        }
+
+        /* Contador de tiempo */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .timer-box {
+            background: #fff0f3;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #ffb3c1;
+        }
+
+        .timer-box span {
+            display: block;
+            font-size: 22px;
+            font-weight: bold;
+            color: #c9184a;
+        }
+
+        .timer-box small {
+            font-size: 11px;
+            color: #555;
+        }
+
+        /* Carta interactiva */
+        .sobre {
+            background: #ff8fa3;
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .sobre:hover {
+            transform: scale(1.02);
+        }
+
+        .contenido-carta {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 15px;
+            font-family: 'Caveat', cursive;
+            font-size: 28px;
+            color: #333;
+            line-height: 1.4;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .mensaje-principal {
+            color: #c9184a;
+            font-size: 38px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Premio Raspable */
+        #scratch-canvas {
+            border-radius: 12px;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .scratch-container {
+            position: relative;
+            width: 280px;
+            height: 120px;
+            margin: 15px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .scratch-reward {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #c9184a;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Álbum de Fotos Polaroid */
+        .grid-fotos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .foto-card {
+            background: white;
+            padding: 12px 12px 20px 12px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+
+        .foto-card:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .foto-card:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
+
+        .foto-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .foto-card p {
+            font-family: 'Caveat', cursive;
+            font-size: 22px;
+            color: #d63384;
+            margin-top: 10px;
+        }
+
+        #razon-texto {
+            font-family: 'Caveat', cursive;
+            font-size: 26px;
+            color: #c9184a;
+            min-height: 60px;
+            margin-top: 15px;
+        }
+
+        /* Sección Final */
+        #seccion-final {
+            display: none;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            border: 3px solid #fff;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #seccion-final h2 {
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .texto-cierre {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .botones-finales {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-final {
+            background: #ffffff;
+            color: #ff4d6d;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .btn-final:hover {
+            transform: scale(1.03);
+        }
+
+        /* Partículas animadas */
+        .efecto-particula {
+            position: fixed;
+            font-size: 25px;
+            animation: flotar 3s linear forwards;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- REPRODUCTOR DE MÚSICA -->
+    <div id="music-player-bar">
+        <button id="music-btn" onclick="toggleMusic()">🎵 MÚSICA: OFF</button>
+    </div>
+    <audio id="bg-music" src="musica.mp3" loop></audio>
+
+    <!-- 1. JUEGO INICIAL -->
+    <div class="card" id="juego-card">
+        <h1>¿Quieres descubrir la sorpresa especial que tengo para ti? ❤️</h1>
+        <div class="btn-group">
+            <button class="btn" onclick="mostrarSorpresa()">¡Sí, ver sorpresa!</button>
+            <button class="btn" id="btn-no" onmouseover="moverBoton()" onclick="moverBoton()">Sera en la siguiente vida mi chula</button>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="contenido-principal" class="seccion-oculta">
+
+        <!-- 2. CONTADOR DE TIEMPO -->
+        <div class="card">
+            <h2>Tiempo construyendo momentos juntos ⏳</h2>
+            <div class="timer-grid">
+                <div class="timer-box"><span id="days">824</span><small>Días</small></div>
+                <div class="timer-box"><span id="hours">20,208</span><small>Horas</small></div>
+                <div class="timer-box"><span id="minutes">1,212,480</span><small>Minutos</small></div>
+                <div class="timer-box"><span id="seconds">72,748,800</span><small>Segundos</small></div>
+            </div>
+        </div>
+
+        <!-- 3. GENERADOR DE RAZONES -->
+        <div class="card">
+            <h2>¿Por qué eres mi persona favorita? 💌</h2>
+            <div id="razon-texto">Haz clic en el botón de abajo para descubrir una razón...</div>
+            <button class="btn" onclick="nuevaRazon()">Generar Razón ✨</button>
+        </div>
+
+        <!-- 4. RASPABLE -->
+        <div class="card">
+            <h2>Raspa aquí tu premio especial 🎁</h2>
+            <p style="font-size: 12px; color: #666;">Pasa el mouse o tu dedo por el cuadro gris para descubrirlo</p>
+            <div class="scratch-container">
+                <div class="scratch-reward">🎟️ ¡Vale por una cita romántica y tu postre favorito! 🍰</div>
+                <canvas id="scratch-canvas" width="280" height="120"></canvas>
+            </div>
+        </div>
+
+        <!-- 5. ÁLBUM DE FOTOS -->
+        <div class="card">
+            <h2>Nuestros Recuerdos 📸</h2>
+            <div class="grid-fotos">
+                <div class="foto-card">
+                    <img src="foto1.jpg" alt="Foto 1" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500'">
+                    <p>Un día inolvidable ✨</p>
+                </div>
+                <div class="foto-card">
+                    <img src="foto2.jpg" alt="Foto 2" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500'">
+                    <p>A tu lado todo es lindo 😊</p>
+                </div>
+                <div class="foto-card">
+                    <img src="foto3.jpg" alt="Foto 3" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500'">
+                    <p>Juntos siempre ❤️</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. CARTA INTERACTIVA -->
+        <div class="card">
+            <h2>Una carta para ti ✉️</h2>
+            <div class="sobre" onclick="abrirCarta()">
+                ✉️ Toca aquí para abrir tu carta
+            </div>
+            <div class="contenido-carta" id="carta">
+                <p>Desde que llegaste a mi vida, cada momento se ha vuelto más bonito y especial. Gracias por tus risas, por tu apoyo y por hacerme tan feliz todos los días. No se que pasaraa, no se si llegaremos más lejos, quiero que sepas que fuiste y serás lo mejor que tuve, un amor incondicional y bonito, algo que sin duda es especial, nunca dejes que te amen menos, por que tu eres especial, mereces todo lo bonito en este mundo, en mi futuro siempre estarás presente, sigue soñando y luchando por todo eso que deseas, sea de cerca o de lejos estaré orgullosa de ti siempre, si no soy la mujer de tu vida, seré la que mejores intenciones tuvo desde el primer dia que te conoci, por siempre y para siempre tú</p>
+                <div class="mensaje-principal">
+                    TE AMARÉ SIEMPRE PASTELITO ❤️
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. SECCIÓN FINAL DE CIERRE -->
+        <div class="card" id="seccion-final">
+            <h2>✨ Llegaste al final de la sorpresa ✨</h2>
+            <p class="texto-cierre">
+                Espero que esta pequeña página te haya sacado una gran sonrisa. Gracias por ser la persona más linda, por cada detalle y por compartir tu tiempo conmigo. ¡Eres lo mejor que me ha pasado!
+            </p>
+            <div class="botones-finales">
+                <button class="btn-final" onclick="lanzarAmor('🤗 ¡Un abrazo enorme enviado con mucho amor!')">🤗 ¿Me das un abrazo virtual?</button>
+                <button class="btn-final" onclick="lanzarAmor('❤️ ¡Yo también te amo con todo mi corazón!')">❤️ Te amo con todo mi corazón</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            let music = document.getElementById('bg-music');
+            let btn = document.getElementById('music-btn');
+            if (musicPlaying) {
+                music.pause();
+                btn.innerHTML = "🎵 MÚSICA: OFF";
+                musicPlaying = false;
+            } else {
+                music.play().then(() => {
+                    btn.innerHTML = "🎵 MÚSICA: ON";
+                    musicPlaying = true;
+                }).catch(() => {
+                    alert("Asegúrate de que el archivo 'musica.mp3' esté en la misma carpeta.");
+                });
+            }
+        }
+
+        function moverBoton() {
+            let btnNo = document.getElementById('btn-no');
+            let x = Math.random() * (window.innerWidth - 220);
+            let y = Math.random() * (window.innerHeight - 50);
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = x + 'px';
+            btnNo.style.top = y + 'px';
+        }
+
+        function mostrarSorpresa() {
+            document.getElementById('juego-card').style.display = 'none';
+            document.getElementById('contenido-principal').style.display = 'block';
+            if (!musicPlaying) toggleMusic();
+            iniciarContador();
+            initScratch();
+        }
+
+        function abrirCarta() {
+            document.getElementById('carta').style.display = 'block';
+            document.getElementById('seccion-final').style.display = 'block';
+            document.getElementById('seccion-final').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        const razones = [
+            "Por la forma tan bonita en la que sonríes.",
+            "Porque haces que cualquier día normal sea increíble.",
+            "Por abrazarme justo cuando más lo necesito.",
+            "Porque amo tu voz y la paz que me da hablar contigo.",
+            "Por ser mi mejor amiga y mi amor al mismo tiempo.",
+            "Porque contigo puedo ser yo mismo al 100%."
+        ];
+
+        function nuevaRazon() {
+            let index = Math.floor(Math.random() * razones.length);
+            document.getElementById('razon-texto').innerText = razones[index];
+        }
+
+        const fechaInicio = new Date('2025-01-01T00:00:00');
+
+        function iniciarContador() {
+            setInterval(() => {
+                const ahora = new Date();
+                const diff = ahora - fechaInicio;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = hours;
+                document.getElementById('minutes').innerText = minutes;
+                document.getElementById('seconds').innerText = seconds;
+            }, 1000);
+        }
+
+        function initScratch() {
+            const canvas = document.getElementById('scratch-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#b0b0b0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = 'bold 16px Poppins';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.fillText('✨ RASPA AQUÍ ✨', canvas.width / 2, canvas.height / 2 + 5);
+
+            let isDrawing = false;
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 18, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            canvas.addEventListener('mousedown', () => isDrawing = true);
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mousemove', scratch);
+
+            canvas.addEventListener('touchstart', () => isDrawing = true);
+            canvas.addEventListener('touchend', () => isDrawing = false);
+            canvas.addEventListener('touchmove', scratch);
+        }
+
+        function lanzarAmor(mensaje) {
+            alert(mensaje);
+            const emojis = ['💖', '✨', '🌸', '❤️', '🥰', '🌷'];
+            for (let i = 0; i < 30; i++) {
+                let p = document.createElement('div');
+                p.classList.add('efecto-particula');
+                p.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.bottom = '0px';
+                p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(p);
+
+                setTimeout(() => { p.remove(); }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
